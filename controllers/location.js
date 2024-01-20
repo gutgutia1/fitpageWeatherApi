@@ -27,7 +27,16 @@ exports.getLocationDetails = async(req,res)=>{
       }
 }
 
+
 exports.postLocationDetails = async(req,res)=>{
+    function containsOnlyNumbers(inputString) {
+        // Use a regular expression to check if the string contains only numbers
+        return /^\d+$/.test(inputString);
+    }
+    function containsOnlyAlphabets(inputString) {
+        // Use a regular expression to check if the string contains only alphabets
+        return /^[a-zA-Z]+$/.test(inputString);
+    }
     try{
         const actionDate = new Date()
         const action = "POST"
@@ -37,6 +46,18 @@ exports.postLocationDetails = async(req,res)=>{
             return res.status(400).json({
                 success:false,
                 message:"name or latitude or longitude is missing "
+            })
+        }
+        if(!containsOnlyAlphabets(name)){
+            return res.status(400).json({
+                success:false,
+                message:"name should be string only "
+            })
+        }
+        if(!containsOnlyNumbers(longitude) || !containsOnlyNumbers(latitude)){
+            return res.status(400).json({
+                success:false,
+                message:"latitude and longitude should be numeric only "
             })
         }
         const existingLocation  = await Location.findOne({name,latitude,longitude});
